@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, TextField } from "@mui/material";
 
-function CommonForm({ formControls, onSubmit, buttonText }) {
+function CommonForm({ formControls, formData, setFormData, onSubmit, buttonText }) {
   const renderInputsByComponentType = (item) => {
     switch (item.componentType) {
       case "input":
@@ -10,6 +10,7 @@ function CommonForm({ formControls, onSubmit, buttonText }) {
             variant="outlined"
             label={item.label}
             type={item.type}
+            onChange={(e) => {setFormData({...formData, [item.name]: e.target.value})}}
             fullWidth
           />
         );

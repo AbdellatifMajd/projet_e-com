@@ -1,10 +1,33 @@
-import React from "react";
+import React, { useState } from "react";
 import CommonForm from "../../common/CommonForm";
 import { loginFormControls } from "../../config";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import {useDispatch} from "react-redux";
+import { loginUser } from "../../store/AUthSlice";
 
 function Login() {
-  const onSubmit = () => {};
+  const initialState = {
+    email: "", 
+    password: ""
+  }
+  const [formData, setFormData] = useState(initialState)
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const onSubmit = (event) => {
+    event.preventDefault();
+      try{
+        dispatch(loginUser(formData)).unwrap()
+      .then((data) => {
+        console.log("connection successfull");
+        
+      });
+      }
+      catch(e){
+        console.log("connection failed", e)
+      }
+  };
+
   return (
 <div className="w-full max-w-md space-y-6 rounded-3xl border border-gray-500 bg-white p-6 shadow-xl dark:border-gray-800 dark:bg-zinc-950 sm:p-8">
   <div className="flex items-center space-x-2">
@@ -29,6 +52,8 @@ function Login() {
   <div className="mt-4">
     <CommonForm
       formControls={loginFormControls}
+      formData={formData}
+      setFormData={setFormData}
       onSubmit={onSubmit}
       buttonText={"Sign In"}
     />
