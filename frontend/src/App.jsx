@@ -1,13 +1,17 @@
-import { useState } from "react";
+import { Routes, Route } from "react-router-dom";
 import "./App.css";
+import AuthLayout from "./pages/Layouts/AuthLayout";
+import Login from "./pages/Auth/Login";
+import Register from "./pages/Auth/Register";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <div className="flex items-center justify-center">
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
-    </div>
+    <Routes>
+      <Route element={<AuthLayout />} path="/auth">
+        <Route element={<Login />} path="login" />
+        <Route element={<Register />} path="register" />
+      </Route>
+    </Routes>
   );
 }
 
