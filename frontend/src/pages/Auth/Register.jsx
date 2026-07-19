@@ -1,10 +1,28 @@
-import React from 'react'
+import React, { useState } from 'react'
 import CommonForm from '../../common/CommonForm'
 import { registerFormControls } from '../../config'
 import { Link } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { registerUser } from '../../store/AUthSlice'
 
 function Register() {
-  const onSubmit = () => {
+  const initialState = {
+    username: "", 
+    email: "", 
+    password: ""
+  }
+  const [formData, setFormData] = useState(initialState)
+  const dispatch = useDispatch();
+
+  const onSubmit = (event) => {
+        event.preventDefault();
+          try{
+            dispatch(registerUser(formData)).unwrap()
+            console.log("Registration successfull");
+          }
+          catch(e){
+            console.log("Registration failed", e)
+          }
     
   }
   return (
@@ -25,6 +43,8 @@ function Register() {
       </div>
       <CommonForm
         formControls={registerFormControls}
+        formData={formData}
+        setFormData={setFormData}
         buttonText={"Sign Up"}
         onSubmit={onSubmit}
       />

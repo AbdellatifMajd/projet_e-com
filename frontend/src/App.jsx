@@ -3,15 +3,19 @@ import "./App.css";
 import AuthLayout from "./pages/Layouts/AuthLayout";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
+import { Toaster } from "sonner";
 
 function App() {
   return (
-    <Routes>
-      <Route element={<AuthLayout />} path="/auth">
-        <Route element={<Login />} path="login" />
-        <Route element={<Register />} path="register" />
-      </Route>
-    </Routes>
+    <>
+      <Toaster position="top-right" closeButton richColors/>
+      <Routes>
+        <Route element={<AuthLayout />} path="/auth">
+          <Route element={<Login />} path="login" />
+          <Route element={<Register />} path="register" />
+        </Route>
+      </Routes>
+    </>
   );
 }
 
