@@ -39,11 +39,13 @@ jobs:
           MYSQL_ROOT_PASSWORD: root       # Mot de passe administrateur MySQL
         ports:
           - 3306:3306                     # Mappe le port MySQL du conteneur sur le runner
+        
+        # Vérifie que MySQL est prêt avant de lancer les tests
         options: >-
           --health-cmd="mysqladmin ping -h localhost"
           --health-interval=10s
           --health-timeout=5s
-          --health-retries=5               # Vérifie que MySQL est prêt avant de lancer les tests
+          --health-retries=5               
 
     # --- Étapes du Job Backend ---
     steps:
