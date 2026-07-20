@@ -3,8 +3,8 @@ import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import CommonForm from "../../common/CommonForm";
 import { loginFormControls } from "../../config";
+import {loginUser} from "../../store/AuthSlice"
 import { useState } from "react";
-import { loginUser } from "../../store/AUthSlice";
 
 function Login() {
   const initialState = {

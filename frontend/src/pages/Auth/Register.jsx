@@ -3,8 +3,7 @@ import CommonForm from '../../common/CommonForm'
 import { registerFormControls } from '../../config'
 import { Link } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import { registerUser } from '../../store/AUthSlice'
-
+import {registerUser} from "../../store/AuthSlice";
 function Register() {
   const initialState = {
     username: "", 
