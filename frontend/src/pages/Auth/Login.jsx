@@ -21,7 +21,6 @@ function Login() {
     try {
       const result = await dispatch(loginUser(formData)).unwrap();
       toast.success(result?.message);
-      navigate("/");
     } catch (e) {
       toast.error(e?.message);
     }
