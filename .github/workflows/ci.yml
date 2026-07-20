@@ -1,0 +1,147 @@
+# ==============================================================================
+# PIPELINE CI FULLSTACK (Laravel + React)
+# ==============================================================================
+# Ce workflow s'exécute automatiquement sur les serveurs de GitHub Actions
+# pour valider l'intégrité du code backend et frontend lors des modifications.
+# ==============================================================================
+
+name: Fullstack CI Pipeline
+
+# ------------------------------------------------------------------------------
+# 1. DÉCLENCHEURS (EVENTS)
+# ------------------------------------------------------------------------------
+# Définit quand ce pipeline doit s'exécuter.
+on:
+  push:
+    branches:
+      - develop  # Déclenché lors d'un push direct sur la branche 'develop'
+  pull_request:
+    branches:
+      - develop  # Déclenché lors de l'ouverture ou mise à jour d'une PR vers 'develop'
+
+# ------------------------------------------------------------------------------
+# 2. JOBS (TÂCHES EXÉCUTÉES EN PARALLÈLE)
+# ------------------------------------------------------------------------------
+jobs:
+
+  # ============================================================================
+  # JOB 1 : TESTS & VALIDATION DU BACKEND (Laravel)
+  # ============================================================================
+  backend-tests:
+    runs-on: ubuntu-latest  # Utilise la dernière machine virtuelle Ubuntu fournie par GitHub
+
+    # --- Service conteneurisé : Base de données de test ---
+    services:
+      mysql:
+        image: mysql:8.0  # Image officielle MySQL (alignée avec le docker-compose local)
+        env:
+          MYSQL_DATABASE: e-com_testing  # Base dédiée aux tests (isole les données)
+          MYSQL_ROOT_PASSWORD: root       # Mot de passe administrateur MySQL
+        ports:
+          - 3306:3306                     # Mappe le port MySQL du conteneur sur le runner
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5               # Vérifie que MySQL est prêt avant de lancer les tests
+
+    # --- Étapes du Job Backend ---
+    steps:
+      # Étape 1 : Récupération du code source depuis le dépôt GitHub
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Étape 2 : Installation de PHP et des extensions requises par Laravel
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'                                     # Alignée avec la version PHP de votre Dockerfile
+          extensions: mbstring, pdo, pdo_mysql, bcmath, gd, zip # Extensions nécessaires pour Laravel
+          tools: composer:v2                                    # Active Composer v2
+
+      # Étape 3 : Mise en cache du dossier vendor pour accélérer les futurs builds CI
+      - name: Cache Composer packages
+        uses: actions/cache@v3
+        with:
+          path: backend/vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('backend/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      # Étape 4 : Installation des dépendances PHP (packages Composer)
+      - name: Install Backend Dependencies
+        run: |
+          cd backend
+          composer install --prefer-dist --no-interaction --no-progress
+
+      # Étape 5 : Création du fichier d'environnement de test et génération de la clé APP_KEY
+      - name: Prepare Environment
+        run: |
+          cd backend
+          cp .env.example .env.testing
+          php artisan key:generate --env=testing
+
+      # Étape 6 : Exécution des migrations pour créer les tables dans MySQL de test
+      - name: Run Migrations
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: e-com_testing
+          DB_USERNAME: root
+          DB_PASSWORD: root
+        run: |
+          cd backend
+          php artisan migrate --env=testing --force
+
+      # Étape 7 : Lancement de la suite de tests automatisés Laravel (PHPUnit/Pest)
+      - name: Execute Backend Tests
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: e-com_testing
+          DB_USERNAME: root
+          DB_PASSWORD: root
+        run: |
+          cd backend
+          php artisan test
+
+
+  # ============================================================================
+  # JOB 2 : COMPILATION & VALIDATION DU FRONTEND (React)
+  # ============================================================================
+  frontend-checks:
+    runs-on: ubuntu-latest  # S'exécute sur un runner indépendant en parallèle du backend
+
+    # --- Étapes du Job Frontend ---
+    steps:
+      # Étape 1 : Récupération du code source
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Étape 2 : Configuration de l'environnement Node.js et gestion du cache npm
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'                           # Alignée avec la version Node du Dockerfile frontend
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      # Étape 3 : Installation propre des packages npm (utilise npm ci pour la CI)
+      - name: Install Frontend Dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      # Étape 4 : Test de build React/Vite (détecte les erreurs de syntaxe, imports brisés, etc.)
+      - name: Build Frontend
+        run: |
+          cd frontend
+          npm run build
+
+      # Étape 5 (Optionnelle) : À décommenter une fois les tests unitaires React (Vitest/Jest) créés
+      # - name: Run Frontend Tests
+      #   run: |
+      #     cd frontend
+      #     npm test -- --watchAll=false
