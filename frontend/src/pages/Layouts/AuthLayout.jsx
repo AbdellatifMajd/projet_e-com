@@ -7,9 +7,9 @@ function AuthLayout() {
     <div className="flex min-h-screen w-full">
       <div className="flex items-center justify-center w-1/2">
         {location.pathname.includes("register") ? (
-          <img src="/images/1.png" alt="" className="w-full h-screen object-cover" />
+          <img src="/images/1.webp" alt="" className="w-full h-screen object-cover" />
         ) : (
-          <img src="/images/2.png" alt="" className=" h-screen object-cover"/>
+          <img src="/images/2.webp" alt="" className=" h-screen object-cover"/>
         )}
       </div>
 
