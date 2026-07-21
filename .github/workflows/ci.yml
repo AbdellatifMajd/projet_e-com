@@ -34,7 +34,7 @@ jobs:
       # Installe PHP (même version que ton Dockerfile)
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.2"
+          php-version: "8.4"
 
       # Installe les dépendances PHP (composer.json -> vendor/)
       - name: Install dependencies
