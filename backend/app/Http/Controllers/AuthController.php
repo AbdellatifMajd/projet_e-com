@@ -6,7 +6,6 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -52,9 +51,9 @@ class AuthController extends Controller
 
         //vérification des identifiants
         if(!$user || !Hash::check($validated["password"], $user->password)){
-            throw ValidationException::withMessages([
-                'email' => "Invalid credentials"
-            ]);
+            return response()->json([
+                'message' => "Invalid credentials"
+            ], 401);
         }
 
         //génération du token 
