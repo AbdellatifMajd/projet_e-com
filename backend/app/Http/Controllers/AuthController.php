@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -38,38 +39,36 @@ class AuthController extends Controller
     }
 
 
-    public function login(Request $request){
-        try{
-            //validation des entrées 
-            $validated = $request->validate([
+public function login(Request $request)
+{
+    try {
+        // Validation
+        $credentials = $request->validate([
             'email' => "required|string|email",
             'password' => "required|min:4"
         ]);
 
-        //récupération de l'utilisateur 
-        $user = User::where("email", $validated["email"])->first();
+        // Authentification et création de la session
+        if (Auth::attempt($credentials)) {
+            // Regénère la session pour éviter le Session Fixation attack
+            $request->session()->regenerate(); 
 
-        //vérification des identifiants
-        if(!$user || !Hash::check($validated["password"], $user->password)){
             return response()->json([
-                'message' => "Invalid credentials"
-            ], 401);
+                'message' => "User connected successfully.",
+                'user' => Auth::user()
+            ], 200);
         }
 
-        //génération du token 
-        $token = $user->createToken("auth_token")->plainTextToken;
-
+        // Si l'authentification a échoué
         return response()->json([
-            'message' => "User connected successfully.",
-            'user' => $user, 
-            'token' => $token 
-        ]);
-        }
-        catch(Exception $e){
-            return response()->json([
-                'message' => "An error occured, please try again.", $e->getMessage()
-            ], 400);
-        }
+            'message' => "Invalid credentials"
+        ], 401);
 
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => "An error occured, please try again.",
+            'error' => $e->getMessage()
+        ], 400);
     }
+}
 }

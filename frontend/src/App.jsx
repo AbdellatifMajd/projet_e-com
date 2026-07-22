@@ -5,12 +5,20 @@ import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import { Toaster } from "sonner";
 import CheckAuth from "./common/CheckAuth";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import AdminLayout from "./pages/Layouts/AdminLayout";
 import Dashboard from "./pages/Admin/Dashboard";
+import { useEffect } from "react";
+import { checkAuth } from "./store/AuthSlice";
+
 
 function App() {
   const {isAuthenticated, user} = useSelector((state) => state.auth)
+  const dispatch = useDispatch();
+
+  useEffect(()=> {
+    dispatch(checkAuth());
+  }, [])
 
   return (
     <>

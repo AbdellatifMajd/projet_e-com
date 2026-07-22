@@ -15,11 +15,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
-Route::prefix("auth")->group(function(){
+Route::prefix("auth")->group(function () {
     Route::post("/register", [AuthController::class, "register"]);
     Route::post("/login", [AuthController::class, "login"]);
+    
+    Route::middleware('auth:sanctum')->get('/checkAuth', function (Request $request) {
+        return response()->json(['user' => $request->user()]);
+    });
 });
