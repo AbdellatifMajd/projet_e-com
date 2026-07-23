@@ -39,8 +39,7 @@ class AuthController extends Controller
     }
 
 
-public function login(Request $request)
-{
+public function login(Request $request){
     try {
         // Validation
         $credentials = $request->validate([
@@ -70,5 +69,13 @@ public function login(Request $request)
             'error' => $e->getMessage()
         ], 400);
     }
+}
+
+
+public function logout(Request $request){
+    Auth::guard('web')->logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return response()->json(["message" => "User Logout successfully"], 201);
 }
 }

@@ -2,12 +2,14 @@ import React from 'react';
 import { LogOut } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { logoutUser } from '@/store/AuthSlice';
 
 function AdminHeader() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
+    dispatch(logoutUser())
     navigate('/auth/login');
   };
 
