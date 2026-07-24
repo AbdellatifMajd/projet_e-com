@@ -1,5 +1,4 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { Navigate, useLocation } from "react-router-dom";
 
 function CheckAuth({ isAuthenticated, user, children }) {
@@ -10,8 +9,11 @@ function CheckAuth({ isAuthenticated, user, children }) {
   }
 
    if(isAuthenticated && location.pathname.includes("auth")){
-     if(isAuthenticated && user?.role == "admin"){
+     if( user?.role == "admin"){
         return <Navigate to="/admin/dashboard" />
+    }
+    else{
+      return <Navigate to="/shop/home" />
     }
     
    }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,4 +25,13 @@ Route::prefix("auth")->group(function () {
     Route::middleware('auth:sanctum')->get('/checkAuth', function (Request $request) {
         return response()->json(['user' => $request->user()]);
     });
+});
+
+
+Route::prefix("admin/products")->group(function(){
+    Route::get('/fetchAll', [ProductController::class, 'index']);      
+    Route::post('/add', [ProductController::class, 'store']);     
+    Route::get('/{id}', [ProductController::class, 'show']);   
+    Route::put('/{id}', [ProductController::class, 'update']); 
+    Route::delete('/{id}', [ProductController::class, 'destroy']);
 });
