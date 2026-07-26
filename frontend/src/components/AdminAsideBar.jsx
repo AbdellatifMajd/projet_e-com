@@ -64,13 +64,13 @@ export function AdminAsideBar() {
             className="flex items-center gap-3 cursor-pointer overflow-hidden"
           >
             <img
-              src="/images/1.webp"
+              src="/logo_articia.webp"
               alt="logo"
               className="rounded-xl w-9 h-9 object-cover shrink-0"
             />
             {state === "expanded" && (
               <h1 className="font-bold text-base tracking-wide text-slate-800 truncate">
-                M-Store
+                Articia 
               </h1>
             )}
           </div>

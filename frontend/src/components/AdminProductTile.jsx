@@ -1,41 +1,97 @@
-import { Button, Card, CardContent } from "@mui/material";
+import {
+  Avatar,
+  Chip,
+  IconButton,
+  Stack,
+  TableCell,
+  TableRow,
+  Typography,
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlined";
 import React from "react";
 
-function AdminProductTile({ productItem }) {
+function AdminProductTile({
+  productItem,
+  handleEditProduct,
+  handleDeleteProduct,
+}) {
+  const isOutOfStock = productItem.totalStock === 0;
+  const isLowStock = productItem.totalStock > 0 && productItem.totalStock <= 20;
+
+  const stockColor = isOutOfStock
+    ? "error"
+    : isLowStock
+      ? "warning"
+      : "text.secondary";
+
   return (
-    <Card>
-      <div>
-        <div className="relative">
-          <img
+    <TableRow hover>
+      <TableCell>
+        <Stack direction="row" alignItems="center" spacing={1.5}>
+          <Avatar
             src={productItem.imageUrl}
-            alt={productItem.title}
-            className="w-full h-[300px] object-cover rounded-t-lg"
+            variant="rounded"
+            sx={{ width: 40, height: 40 }}
           />
-        </div>
-        <CardContent>
-          <h1 className="text-xl font-bold mb-2 mt-2">{productItem.title}</h1>
-          <div className="flex flex-col justify-between gap-4 mb-2">
-            <div>{productItem.description}</div>
-            <span>
-              {productItem?.salePrice > 0 ? (
-                <span className="text-lg font-bold">${productItem?.salePrice}</span>
-              ) : null}
-            </span>
-          </div>
-        </CardContent>
+          <Typography variant="body2" fontWeight={500}>
+            {productItem.title}
+          </Typography>
+        </Stack>
+      </TableCell>
 
-        <footer className="flex justify-end items-center">
-            <Button 
-            variant="outlined"
-            sx={{m: 2}}
-            onClick={()=>{
+      <TableCell align="center">
+        <Typography
+          variant="body2"
+          fontWeight={isLowStock || isOutOfStock ? 600 : 400}
+          color={stockColor}
+        >
+          {isOutOfStock ? "Out of stock" : productItem.totalStock}
+        </Typography>
+      </TableCell>
 
-            }}>
-                Edit product
-            </Button>
-        </footer>
-      </div>
-    </Card>
+      <TableCell align="center" sx={{ width: 100 }}>
+        <Typography variant="body2" color="text.secondary">
+          ${productItem.price}
+        </Typography>
+      </TableCell>
+
+      <TableCell align="center">
+        {productItem.salePrice > 0 ? (
+          <Chip
+            label={`-${Math.round((1 - productItem.salePrice / productItem.price) * 100)}%`}
+            color="success"
+            size="small"
+          />
+        ) : (
+          <Typography variant="body2" color="text.disabled">
+            —
+          </Typography>
+        )}
+      </TableCell>
+
+      <TableCell align="center" sx={{ width: 100 }}>
+        <Stack
+          direction="row"
+          spacing={1}
+          justifyContent="center"
+          alignItems="center"
+        >
+          <IconButton
+            size="small"
+            onClick={() => handleEditProduct?.(productItem)}
+          >
+            <EditIcon fontSize="small" />
+          </IconButton>
+          <IconButton
+            size="small"
+            onClick={() => handleDeleteProduct?.(productItem)}
+          >
+            <DeleteOutlineIcon fontSize="small" />
+          </IconButton>
+        </Stack>
+      </TableCell>
+    </TableRow>
   );
 }
 
