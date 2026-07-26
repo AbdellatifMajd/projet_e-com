@@ -28,6 +28,7 @@ function AdminProdcut() {
     dispatch(fetchAllAdminProducts());
   }, [dispatch]);
 
+//   search bar
   const filteredList = useMemo(() => {
     if (!productList) return [];
     const term = search.trim().toLowerCase();
@@ -48,20 +49,24 @@ function AdminProdcut() {
         alignItems="center"
         sx={{ p: 2 }}
       >
-        <TextField
-          placeholder="Search by name or price"
-          size="small"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          sx={{ width: 280, marginRight: "5px" }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon fontSize="small" color="disabled" />
-              </InputAdornment>
-            ),
-          }}
-        />
+       <TextField
+  placeholder="Search by name or price"
+  size="small"
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+  sx={{ width: 280, marginRight: "5px" }}
+  slotProps={{
+    input: {
+      startAdornment: (
+        <InputAdornment position="start">
+          <SearchIcon fontSize="small" color="disabled" />
+        </InputAdornment>
+      ),
+    },
+  }}
+/>
+
+
 
         <Button variant="contained" startIcon={<AddIcon />}>
           Add new product

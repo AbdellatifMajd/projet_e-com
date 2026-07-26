@@ -33,3 +33,43 @@ export const loginFormControls = [
         type: "password"
     }
 ]
+
+
+export const addProductFormElements = [
+  {
+    label: "Title",
+    name: "title",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter product title",
+  },
+  {
+    label: "Description",
+    name: "description",
+    componentType: "textarea",
+    placeholder: "Enter product description",
+  },
+
+
+  {
+    label: "Price",
+    name: "price",
+    componentType: "input",
+    type: "number",
+    placeholder: "Enter product price",
+  },
+  {
+    label: "Sale Price",
+    name: "salePrice",
+    componentType: "input",
+    type: "number",
+    placeholder: "Enter sale price (optional)",
+  },
+  {
+    label: "Total Stock",
+    name: "totalStock",
+    componentType: "input",
+    type: "number",
+    placeholder: "Enter total stock",
+  },
+];
