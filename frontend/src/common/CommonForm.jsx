@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, TextField } from "@mui/material";
+import { Button, TextareaAutosize, TextField } from "@mui/material";
 
 const renderInputsByComponentType = (item, formData, setFormData) => {
   const value = formData[item.name] || "";
@@ -21,6 +21,24 @@ const renderInputsByComponentType = (item, formData, setFormData) => {
           fullWidth
         />
       );
+
+    case "textarea":
+  return (
+    <TextField
+      variant="outlined"
+      label={item.label}
+      value={value}
+      onChange={(e) =>
+        setFormData({
+          ...formData,
+          [item.name]: e.target.value,
+        })
+      }
+      multiline
+      rows={4}
+      fullWidth
+    />
+  );
 
     default:
       return null;

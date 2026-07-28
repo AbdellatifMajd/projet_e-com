@@ -34,4 +34,5 @@ Route::prefix("admin/products")->group(function(){
     Route::get('/{id}', [ProductController::class, 'show']);   
     Route::put('/{id}', [ProductController::class, 'update']); 
     Route::delete('/{id}', [ProductController::class, 'destroy']);
+    Route::post('/upload-image', [ProductController::class, 'uploadImage']);
 });

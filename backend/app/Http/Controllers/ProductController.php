@@ -27,31 +27,61 @@ class ProductController extends Controller
 
     // ajouter un produit 
     public function store(Request $request){
-        try{
-            $validatedProducts = $request->validate([
-                'title' => "required|string|max:255", 
-                'description' => "nullable|string", 
-                'price' => "required|numeric|min:0", 
-                'salePrice' => "nullable|numeric|min:0", 
-                'totalStock' => "required|integer|min:0", 
-                'imageUrl' => "nullable|string",
-                'category' => "string|max:255", 
-                'brand' => "string|max:255"
-            ]);
+    try {
+        $validated = $request->validate([
+            'title' => "required|string|max:255",
+            'description' => "nullable|string",
+            'price' => "required|numeric|min:0",
+            'discount' => "nullable|numeric|min:0|max:100",
+            'totalStock' => "required|integer|min:0",
+            'image' => "required|string|url", 
+        ]);
 
-            $product = Product::create($validatedProducts);
+        $price = $validated['price'];
+        $discount = $validated['discount'] ?? 0;
+        $salePrice = $price - ($price * $discount / 100);
 
-            return response()->json([
-                "message" => "Product created successfully", 
-                "product" => $product
-            ], 201);
-        }
-        catch(Exception $e){
-            return response()->json([
-                'message' => 'Failed to add a new product', $e->getMessage()
-            ], 400);
-        }
+        $product = Product::create([
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
+            'price' => $price,
+            'salePrice' => $salePrice,
+            'totalStock' => $validated['totalStock'],
+            'imageUrl' => $validated['image'] ?? null,
+        ]);
+
+        return response()->json([
+            "message" => "Product created successfully",
+            "product" => $product,
+        ], 201);
+
+    } 
+    catch (Exception $e) {
+        return response()->json(['message' => 'Failed to add a new product', 'error' => $e->getMessage()], 400);
     }
+    }
+
+// Upload image vers Cloudinary
+public function uploadImage(Request $request){
+    try {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
+        ]);
+
+        // Upload sur Cloudinary
+        $uploadedFile = $request->file('image')->storeOnCloudinary('products');
+
+        return response()->json([
+            'imageUrl' => $uploadedFile->getSecurePath(),
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Cloudinary upload failed',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
 
     // modifier un produit 
     public function update(Request $request, int $id){

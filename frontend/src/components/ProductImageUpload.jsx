@@ -1,31 +1,45 @@
-import { Button, Typography, Stack, Box, IconButton } from "@mui/material";
-import { FileIcon, UploadCloudIcon, XIcon } from "lucide-react";
-import React, { useRef } from "react";
+import {
+  Typography,
+  Stack,
+  Box,
+  IconButton,
+  CircularProgress,
+} from "@mui/material";
+import { FileIcon, UploadCloudIcon } from "lucide-react";
+import React, { useRef, useEffect } from "react";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlined";
+import { useDispatch, useSelector } from "react-redux";
+import { uploadImageToCloudinary } from "@/store/AdminProductSlice";
 
 function ProductImageUpload({ imageFile, setImageFile }) {
   const inputRef = useRef(null);
+  const { imageLoading } = useSelector(
+    (state) => state.adminProduct,
+  );
 
-  const handleImgFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile) {
-      setImageFile(selectedFile);
+
+  const handleImageFileChange = (event) => {
+    const selectedFile = event.target.files?.[0];
+    if (selectedFile) setImageFile(selectedFile);
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
+  };
+
+  const handleDrop = (event) => {
+    event.preventDefault();
+    const droppedFile = event.dataTransfer.files?.[0];
+    if (droppedFile) {
+      setImageFile(droppedFile);
     }
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const droppedFile = e.dataTransfer.files?.[0];
-    setImageFile(droppedFile);
   };
 
   const handleRemoveImage = () => {
     setImageFile(null);
-    if (inputRef.current) inputRef.current.value = "";
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
   };
 
   return (
@@ -41,7 +55,7 @@ function ProductImageUpload({ imageFile, setImageFile }) {
           accept="image/*"
           className="hidden"
           ref={inputRef}
-          onChange={handleImgFileChange}
+          onChange={handleImageFileChange}
         />
 
         {!imageFile ? (
@@ -73,21 +87,33 @@ function ProductImageUpload({ imageFile, setImageFile }) {
                 whiteSpace: "nowrap",
               }}
             >
-              {imageFile?.name}
+              {imageLoading ? "Uploading..." : imageFile?.name}
             </Typography>
 
-            <IconButton
-              color="error"
-              onClick={handleRemoveImage}
-              sx={{
-                position: "absolute",
-                right: 16,
-                top: "50%",
-                transform: "translateY(-50%)",
-              }}
-            >
-              <DeleteOutlineIcon />
-            </IconButton>
+            {imageLoading ? (
+              <CircularProgress
+                size={20}
+                sx={{
+                  position: "absolute",
+                  right: 16,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                }}
+              />
+            ) : (
+              <IconButton
+                color="error"
+                onClick={handleRemoveImage}
+                sx={{
+                  position: "absolute",
+                  right: 16,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                }}
+              >
+                <DeleteOutlineIcon />
+              </IconButton>
+            )}
           </Box>
         )}
       </div>
