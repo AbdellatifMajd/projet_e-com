@@ -60,6 +60,38 @@ export const uploadImageToCloudinary = createAsyncThunk(
   }
 );
 
+export const updateProduct = createAsyncThunk(
+  "admin/updateProduct",
+  async ({ id, formData }, { rejectWithValue }) => {
+    try {
+      console.log("id: ", id)
+      const response = await axios.put(
+        `http://localhost:8000/api/admin/products/update/${id}`,
+        formData,
+        { withCredentials: true }
+      );
+      return response?.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data);
+    }
+  }
+);
+
+export const deleteProduct = createAsyncThunk(
+  "admin/deleteProduct",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:8000/api/admin/products/delete/${id}`,
+        { withCredentials: true }
+      );
+      return response?.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data);
+    }
+  }
+);
+
 
 const AdminProductSlice = createSlice({
   name: "adminProduct",

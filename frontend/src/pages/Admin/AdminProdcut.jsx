@@ -12,10 +12,6 @@ import {
   TableHead,
   TableRow,
   Stack,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
@@ -27,13 +23,13 @@ function AdminProdcut() {
   const { productList } = useSelector((state) => state.adminProduct);
   const dispatch = useDispatch();
   const [openDialog, setOpenDialog] = useState(false);
+  const [currentEditedId, setCurrentEditedId] = useState(null);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
     dispatch(fetchAllAdminProducts());
   }, [dispatch]);
 
-  //   search bar
   const filteredList = useMemo(() => {
     if (!productList) return [];
     const term = search.trim().toLowerCase();
@@ -75,6 +71,7 @@ function AdminProdcut() {
           variant="contained"
           startIcon={<AddIcon />}
           onClick={() => {
+            setCurrentEditedId(null);
             setOpenDialog(true);
           }}
         >
@@ -101,6 +98,8 @@ function AdminProdcut() {
                 <AdminProductTile
                   key={productItem._id}
                   productItem={productItem}
+                  setOpenDialog={setOpenDialog}
+                  setCurrentEditedId={setCurrentEditedId}
                 />
               ))
             ) : (
@@ -116,7 +115,9 @@ function AdminProdcut() {
 
       <AddNewProductForm
         open={openDialog}
-        onClose={() => {setOpenDialog(false)}}
+        onClose={() => setOpenDialog(false)}
+        currentEditedId={currentEditedId}
+        setCurrentEditedId={setCurrentEditedId}
       />
     </Paper>
   );

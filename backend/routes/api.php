@@ -32,7 +32,7 @@ Route::prefix("admin/products")->group(function(){
     Route::get('/fetchAll', [ProductController::class, 'index']);      
     Route::post('/add', [ProductController::class, 'store']);     
     Route::get('/{id}', [ProductController::class, 'show']);   
-    Route::put('/{id}', [ProductController::class, 'update']); 
-    Route::delete('/{id}', [ProductController::class, 'destroy']);
+    Route::put('/update/{id}', [ProductController::class, 'update']); 
+    Route::delete('/delete/{id}', [ProductController::class, 'destroy']);
     Route::post('/upload-image', [ProductController::class, 'uploadImage']);
 });
