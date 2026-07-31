@@ -36,3 +36,7 @@ Route::prefix("admin/products")->group(function(){
     Route::delete('/delete/{id}', [ProductController::class, 'destroy']);
     Route::post('/upload-image', [ProductController::class, 'uploadImage']);
 });
+
+Route::prefix("shop/products")->group(function(){
+    Route::get("/get", [ProductController::class, "getFilteredProducts"]);
+});

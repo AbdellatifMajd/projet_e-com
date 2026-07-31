@@ -71,3 +71,31 @@ export const addProductFormElements = [
     placeholder: "Enter product description",
   },
 ];
+
+
+export const filterOptions = {
+  category: [
+    { id: "tajine", label: "Tajine" },
+    { id: "tajine", label: "Tanjiya" },
+    { id: "bol", label: "Bol" },
+    { id: "tasse", label: "Tasse" },
+    { id: "assiette", label: "Assiètte" },
+    { id: "vase", label: "Vase" },
+    { id: "pot", label: "Pot" },
+  ],
+};
+
+export const sortOptions = [
+  { id: "price-lowtohigh", label: "Price: Low to High" },
+  { id: "price-hightolow", label: "Price: High to Low" },
+  { id: "title-atoz", label: "Title: A to Z" },
+  { id: "title-ztoa", label: "Title: Z to A" },
+];
+
+export const categoryOptionsMap = {
+  men: "Men",
+  women: "Women",
+  kids: "Kids",
+  accessories: "Accessories",
+  footwear: "Footwear",
+};

@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string("imageUrl");
             $table->text("description")->nullable();
             $table->string("category");
-            $table->string("brand");
             $table->decimal("price", 10, 2);
             $table->decimal("salePrice", 10, 2);
             $table->integer("totalStock")->default(0);

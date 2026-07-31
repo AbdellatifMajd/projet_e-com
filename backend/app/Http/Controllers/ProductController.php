@@ -134,4 +134,74 @@ public function update(Request $request, int $id){
         ], 200);
     
         }
-}
+
+
+
+    public function getFilteredProducts(Request $request){ try {
+            $category = $request->query('category', '');
+            $sortBy = $request->query('sortBy', 'price-lowtohigh');
+
+            $query = Product::query();
+
+            if (!empty($category)) {
+                $query->whereIn('category', explode(',', $category));
+            }
+
+            switch ($sortBy) {
+                case 'price-lowtohigh':
+                    $query->orderBy('price', 'asc');
+                    break;
+                case 'price-hightolow':
+                    $query->orderBy('price', 'desc');
+                    break;
+                case 'title-atoz':
+                    $query->orderBy('title', 'asc');
+                    break;
+                case 'title-ztoa':
+                    $query->orderBy('title', 'desc');
+                    break;
+                default:
+                    $query->orderBy('price', 'asc');
+                    break;
+            }
+
+            $products = $query->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $products,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Some error occured', $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getProductDetails($id){
+        try {
+            $product = Product::find($id);
+
+            if (!$product) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Product not found!',
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $product,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Some error occured',
+            ], 500);
+        }
+    }
+
+
+
+        }

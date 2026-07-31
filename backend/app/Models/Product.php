@@ -21,7 +21,6 @@ protected $fillable = [
         'imageUrl',
         'description',
         'category',
-        'brand',
         'price',
         'salePrice',
         'totalStock',

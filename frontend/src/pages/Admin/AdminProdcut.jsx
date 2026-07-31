@@ -1,4 +1,4 @@
-import AdminProductTile from "@/components/AdminProductTile";
+import AdminProductTile from "@/components/Admin/AdminProductTile";
 import { fetchAllAdminProducts } from "@/store/AdminProductSlice";
 import {
   Button,
@@ -17,7 +17,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import AddNewProductForm from "@/components/AddNewProductForm";
+import AddNewProductForm from "@/components/Admin/AddNewProductForm";
 
 function AdminProdcut() {
   const { productList } = useSelector((state) => state.adminProduct);

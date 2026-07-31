@@ -12,6 +12,8 @@ import { useEffect } from "react";
 import { checkAuth } from "./store/AuthSlice";
 import AdminProdcut from "./pages/Admin/AdminProdcut";
 import Skeleton from "@mui/material/Skeleton";
+import ShopLayout from "./pages/Layouts/ShopLayout";
+import ShopHome from "./pages/Shop/ShopHome";
 
 function App() {
   const { isAuthenticated, user, isLoading } = useSelector(
@@ -25,21 +27,30 @@ function App() {
 
   if (isLoading) {
     return (
-<div
-  style={{
-    width: "100vw",
-    height: "100vh",
-    padding: "1rem",
-    boxSizing: "border-box",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-  }}
->
-  <Skeleton variant="rectangular" width="100%" height={60} sx={{ mb: 2 }} />
-  <Skeleton variant="rectangular" width="100%" height="calc(100% - 80px)" />
-</div>
+      <div
+        style={{
+          width: "100vw",
+          height: "100vh",
+          padding: "1rem",
+          boxSizing: "border-box",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Skeleton
+          variant="rectangular"
+          width="100%"
+          height={60}
+          sx={{ mb: 2 }}
+        />
+        <Skeleton
+          variant="rectangular"
+          width="100%"
+          height="calc(100% - 80px)"
+        />
+      </div>
     );
   }
 
@@ -90,6 +101,21 @@ function App() {
         >
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="products" element={<AdminProdcut />} />
+        </Route>
+
+        <Route
+          path="/shop"
+          element={
+            <CheckAuth
+              isAuthenticated={isAuthenticated}
+              user={user}
+              isLoading={isLoading}
+            >
+              <ShopLayout />
+            </CheckAuth>
+          }
+        >
+          <Route path="home" element={<ShopHome />}/>
         </Route>
       </Routes>
     </>

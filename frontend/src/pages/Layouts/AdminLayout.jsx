@@ -1,8 +1,8 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { SidebarProvider } from '@/components/ui/sidebar'; 
-import AdminAsideBar from '../../components/AdminAsideBar';
-import AdminHeader from '../../components/AdminHeader';
+import AdminAsideBar from '../../components/Admin/AdminAsideBar';
+import AdminHeader from '../../components/Admin/AdminHeader';
 
 function AdminLayout() {
   return (

@@ -1,4 +1,4 @@
-import UploadImage from '@/components/UploadImage'
+import UploadImage from '@/components/Admin/UploadImage'
 import { Button } from '@mui/material'
 import React from 'react'
 
