@@ -76,7 +76,7 @@ export const addProductFormElements = [
 export const filterOptions = {
   category: [
     { id: "tajine", label: "Tajine" },
-    { id: "tajine", label: "Tanjiya" },
+    { id: "tanjiya", label: "Tanjiya" },
     { id: "bol", label: "Bol" },
     { id: "tasse", label: "Tasse" },
     { id: "assiette", label: "Assiètte" },

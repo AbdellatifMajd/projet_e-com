@@ -1,10 +1,6 @@
-
-
-// ShopHome.jsx
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-
 import ProductFilter from "@/components/Shop/ProductFilter";
 import ShoppingProductTile from "@/components/Shop/ProductTile";
 import { Button } from "@/components/ui/button";
@@ -17,28 +13,40 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { sortOptions } from "@/config";
-import { fetchAllFilteredProducts } from "@/store/ShopProductSlice";
+import { fetchAllFilteredProducts, toggleFavorites } from "@/store/ShopProductSlice";
 import { ArrowUpDownIcon } from "lucide-react";
 
 function ShopHome() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { productList, isLoading } = useSelector((state) => state.shopProduct);
+  const { productList, isLoading, favorites} = useSelector((state) => state.shopProduct);
 
   const [filters, setFilters] = useState({});
   const [sort, setSort] = useState(sortOptions?.[0]?.id ?? "");
 
+
+
+
+
   useEffect(() => {
-    dispatch(fetchAllFilteredProducts({ filterParams: filters, sortParams: sort }));
+    dispatch(
+      fetchAllFilteredProducts({ filterParams: filters, sortParams: sort }),
+    );
   }, [dispatch, filters, sort]);
 
   function handleFilter(sectionKey, optionId) {
-    setFilters((prev) => {
-      const current = prev[sectionKey] ? [...prev[sectionKey]] : [];
-      const index = current.indexOf(optionId);
-      if (index > -1) current.splice(index, 1);
-      else current.push(optionId);
-      return { ...prev, [sectionKey]: current };
+    setFilters((prevFilters) => {
+      const currentSection = prevFilters[sectionKey] || [];
+      const alreadySelected = currentSection.includes(optionId);
+
+      const updatedSection = alreadySelected
+        ? currentSection.filter((id) => id !== optionId)
+        : [...currentSection, optionId];
+
+      return {
+        ...prevFilters,
+        [sectionKey]: updatedSection,
+      };
     });
   }
 
@@ -57,8 +65,8 @@ function ShopHome() {
   }
 
   const sortLabel = useMemo(
-    () => sortOptions.find((s) => s.id === sort)?.label ?? "Trier",
-    [sort]
+    () => sortOptions.find((s) => s.id === sort)?.label ?? "Sort",
+    [sort],
   );
 
   return (
@@ -72,9 +80,11 @@ function ShopHome() {
       <Card className="w-full border-0 shadow-sm">
         <div className="flex items-center justify-between border-b px-5 py-4">
           <div>
-            <h2 className="text-lg font-semibold">Tous les produits</h2>
+            <h2 className="text-lg font-semibold">All products </h2>
             <p className="text-sm text-muted-foreground">
-              {isLoading ? "Chargement…" : `${productList?.length ?? 0} produit${(productList?.length ?? 0) > 1 ? "s" : ""}`}
+              {isLoading
+                ? "Chargement…"
+                : `${productList?.length ?? 0} product${(productList?.length ?? 0) > 1 ? "s" : ""}`}
             </p>
           </div>
 
@@ -97,37 +107,39 @@ function ShopHome() {
           </DropdownMenu>
         </div>
 
-<div className="p-5">
-  {isLoading ? (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-      {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} className="h-[380px] rounded-xl bg-muted animate-pulse" />
-      ))}
-    </div>
-  ) : productList && productList.length > 0 ? (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-      {productList.map((productItem) => (
-        <ShoppingProductTile
-          key={productItem.id}
-          product={productItem}
-          handleGetProductDetails={handleGetProductDetails}
-          handleAddToCart={handleAddToCart}
-        />
-      ))}
-    </div>
-  ) : (
-    <div className="flex flex-col items-center justify-center py-20 text-center">
-      <p className="text-base font-medium">Aucun produit trouvé</p>
-      <p className="text-sm text-muted-foreground mt-1">
-        Essayez de modifier vos filtres.
-      </p>
-    </div>
-  )}
-</div>
+        <div className="p-5">
+          {isLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-[380px] rounded-xl bg-muted animate-pulse"
+                />
+              ))}
+            </div>
+          ) : productList && productList.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {productList.map((productItem) => (
+                <ShoppingProductTile
+                  key={productItem.id}
+                  product={productItem}
+                  handleGetProductDetails={handleGetProductDetails}
+                  handleAddToCart={handleAddToCart}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <p className="text-base font-medium">No product found...</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Please try to update your filters!
+              </p>
+            </div>
+          )}
+        </div>
       </Card>
     </div>
   );
 }
-
 
 export default ShopHome;
