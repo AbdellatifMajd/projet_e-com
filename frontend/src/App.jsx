@@ -14,11 +14,10 @@ import AdminProdcut from "./pages/Admin/AdminProdcut";
 import Skeleton from "@mui/material/Skeleton";
 import ShopLayout from "./pages/Layouts/ShopLayout";
 import ShopHome from "./pages/Shop/ShopHome";
+import ShopProductDetails from "./components/Shop/ShopProductDetails";
 
 function App() {
-  const { isAuthenticated, user, isLoading } = useSelector(
-    (state) => state.auth,
-  );
+  const { isAuthenticated, user, isLoading } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -116,6 +115,7 @@ function App() {
           }
         >
           <Route path="home" element={<ShopHome />}/>
+          <Route path="product/:id" element={<ShopProductDetails />}/>
         </Route>
       </Routes>
     </>

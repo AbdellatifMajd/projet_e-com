@@ -1,23 +1,26 @@
+import { logoutUser } from "@/store/AuthSlice";
 import { setOpenMenu } from "@/store/ShopProductSlice";
-import { Heart, Menu, SearchIcon, ShoppingCart, User, X } from "lucide-react";
-import React, { useMemo, useRef, useState } from "react";
+import { Button, Card } from "@mui/material";
+import { Heart, LogOut, Menu, SearchIcon, ShoppingCart, User, X } from "lucide-react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 function ShopHeader() {
-  const { favorites, openMenu} = useSelector((state) => state.shopProduct);
-  const favoriteCount = favorites.length;
+  const dispatch = useDispatch();
+  const { favorites, openMenu, productList } = useSelector(
+    (state) => state.shopProduct,
+  );
+  const favoriteCount = favorites?.length ?? 0;
 
   const nav_links = [
-    { id: "account", icon: <User className="w-5 h-5" />, to: "/user/account" },
     {
       id: "favorites",
       icon: (
         <div className="relative">
           <Heart className="w-5 h-5" />
-
           {favoriteCount > 0 && (
-            <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold">
+            <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500">
               {favoriteCount}
             </span>
           )}
@@ -32,15 +35,14 @@ function ShopHeader() {
     },
   ];
 
+  // --- Search ---
   const [searchItem, setSearchItem] = useState("");
   const [showResults, setShowResults] = useState(false);
   const searchRef = useRef(null);
-  const { productList } = useSelector((state) => state.shopProduct);
 
-  // Filtrage des produits en fonction du texte recherché
   const filteredProducts = useMemo(() => {
     if (!searchItem.trim()) return [];
-    return productList.filter((p) =>
+    return (productList ?? []).filter((p) =>
       p.title.toLowerCase().includes(searchItem.trim().toLowerCase()),
     );
   }, [searchItem, productList]);
@@ -50,7 +52,7 @@ function ShopHeader() {
     setSearchItem(value);
     setShowResults(value.trim().length > 0);
   };
-const dispatch = useDispatch()
+
   const handleToggleMenu = () => dispatch(setOpenMenu(!openMenu));
 
   return (
@@ -64,7 +66,7 @@ const dispatch = useDispatch()
       </Link>
 
       <div ref={searchRef} className="relative flex-1 max-w-lg">
-        <div className="flex items-center gap-2 border border-gray-400 rounded-full px-4 py-2 focus-within:border-gray-600 transition-colors">
+        <div className="flex items-center gap-2 border border-gray-400 rounded-full px-4 py-2 focus-within:border-gray-600">
           <SearchIcon className="w-4 h-4 text-gray-500 shrink-0" />
           <input
             value={searchItem}
@@ -118,6 +120,20 @@ const dispatch = useDispatch()
       </div>
 
       <div className="flex items-center gap-1">
+        {/* --- User profile icon + dropdown --- */}
+        <div className="relative" >
+          <button
+            type="button"
+            className="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-700"
+          >
+            <LogOut 
+              className="w-5 h-5 text-red-600"
+              onClick={()=>dispatch(logoutUser())}
+              />
+          </button>
+
+        </div>
+
         {openMenu &&
           nav_links.map((link) => (
             <Link

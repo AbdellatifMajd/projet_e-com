@@ -54,9 +54,6 @@ function ShopHome() {
     setFilters({});
   }
 
-  function handleGetProductDetails(productId) {
-    navigate(`/shop/product/${productId}`);
-  }
 
   function handleAddToCart(productId, totalStock) {
     if (totalStock <= 0) return;
@@ -77,7 +74,7 @@ function ShopHome() {
         handleClearFilters={handleClearFilters}
       />
 
-      <Card className="w-full border-0 shadow-sm">
+      <Card className="w-full">
         <div className="flex items-center justify-between border-b px-5 py-4">
           <div>
             <h2 className="text-lg font-semibold">All products </h2>
@@ -108,22 +105,12 @@ function ShopHome() {
         </div>
 
         <div className="p-5">
-          {isLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="h-[380px] rounded-xl bg-muted animate-pulse"
-                />
-              ))}
-            </div>
-          ) : productList && productList.length > 0 ? (
+          {productList && productList.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {productList.map((productItem) => (
                 <ShoppingProductTile
                   key={productItem.id}
                   product={productItem}
-                  handleGetProductDetails={handleGetProductDetails}
                   handleAddToCart={handleAddToCart}
                 />
               ))}

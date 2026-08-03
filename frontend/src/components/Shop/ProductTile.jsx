@@ -13,16 +13,17 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useDispatch, useSelector } from "react-redux"; 
 import { toggleFavorites } from "@/store/ShopProductSlice";
+import { useNavigate } from "react-router-dom";
 
 function ShoppingProductTile({
   product,
-  handleGetProductDetails,
   handleAddToCart,
 }) {
   const outOfStock = product?.totalStock === 0;
   const onSale = product?.salePrice > 0;
 
   const dispatch = useDispatch();
+  const navigate= useNavigate();
 
   const { favorites } = useSelector((state) => state.shopProduct);
   const favorite = favorites.includes(product?.id);
@@ -56,7 +57,7 @@ function ShoppingProductTile({
       }}
     >
       <CardActionArea
-        onClick={() => handleGetProductDetails?.(product?.id)}
+        onClick={() => navigate(`/shop/product/${product?.id}`)}
         disableRipple
         sx={{ "&:hover .product-image": { transform: "scale(1.04)" } }}
       >
