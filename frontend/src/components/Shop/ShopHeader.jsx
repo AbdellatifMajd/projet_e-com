@@ -1,17 +1,57 @@
-import { logoutUser } from "@/store/AuthSlice";
-import { setOpenMenu } from "@/store/ShopProductSlice";
-import { Button, Card } from "@mui/material";
-import { Heart, LogOut, Menu, SearchIcon, ShoppingCart, User, X } from "lucide-react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { logoutUser } from "@/store/AuthSlice";
+import { setOpenMenu } from "@/store/ShopProductSlice";
+
+import {
+  CircleUserIcon,
+  Heart,
+  LogOut,
+  Menu,
+  Minus,
+  Plus,
+  Search as SearchIcon,
+  ShoppingCart,
+  User,
+  User2,
+  User2Icon,
+  X,
+} from "lucide-react";
+
+import ShopCart from "./ShopCart";
+import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 function ShopHeader() {
+  const [searchItem, setSearchItem] = useState("");
+  const [showResults, setShowResults] = useState(false);
+  const searchRef = useRef(null);
+  const [isDesktop, setIsDesktop] = useState(false);
+  const [openUserProfile, setOpenUserProfile] = useState(false);
+  const location = useLocation();
+
+  const {
+    favorites = [],
+    openMenu,
+    productList,
+  } = useSelector((state) => state.shopProduct);
+  const { cartItems } = useSelector((state) => state.shopCart);
+  const { user } = useSelector((state) => state.auth);
+
   const dispatch = useDispatch();
-  const { favorites, openMenu, productList } = useSelector(
-    (state) => state.shopProduct,
-  );
-  const favoriteCount = favorites?.length ?? 0;
+
+  useEffect(() => {
+    const checkIsDesktop = () => setIsDesktop(window.innerWidth >= 768);
+    checkIsDesktop();
+    window.addEventListener("resize", checkIsDesktop);
+    return () => window.removeEventListener("resize", checkIsDesktop);
+  }, []);
 
   const nav_links = [
     {
@@ -19,26 +59,16 @@ function ShopHeader() {
       icon: (
         <div className="relative">
           <Heart className="w-5 h-5" />
-          {favoriteCount > 0 && (
-            <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500">
-              {favoriteCount}
+          {favorites?.length > 0 && (
+            <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+              {favorites?.length}
             </span>
           )}
         </div>
       ),
       to: "/shop/favorites",
     },
-    {
-      id: "cart",
-      icon: <ShoppingCart className="w-5 h-5" />,
-      to: "/shop/cart",
-    },
   ];
-
-  // --- Search ---
-  const [searchItem, setSearchItem] = useState("");
-  const [showResults, setShowResults] = useState(false);
-  const searchRef = useRef(null);
 
   const filteredProducts = useMemo(() => {
     if (!searchItem.trim()) return [];
@@ -54,6 +84,8 @@ function ShopHeader() {
   };
 
   const handleToggleMenu = () => dispatch(setOpenMenu(!openMenu));
+
+  const handleAddToCart = (item) => {};
 
   return (
     <div className="flex items-center justify-between gap-4 border-b p-3">
@@ -120,21 +152,7 @@ function ShopHeader() {
       </div>
 
       <div className="flex items-center gap-1">
-        {/* --- User profile icon + dropdown --- */}
-        <div className="relative" >
-          <button
-            type="button"
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-700"
-          >
-            <LogOut 
-              className="w-5 h-5 text-red-600"
-              onClick={()=>dispatch(logoutUser())}
-              />
-          </button>
-
-        </div>
-
-        {openMenu &&
+        {(openMenu || isDesktop) &&
           nav_links.map((link) => (
             <Link
               key={link.id}
@@ -145,14 +163,64 @@ function ShopHeader() {
             </Link>
           ))}
 
-        <button
-          type="button"
-          onClick={handleToggleMenu}
-          aria-label={openMenu ? "Close menu" : "Open menu"}
-          className="rounded-full p-2 hover:bg-gray-100 transition-colors"
-        >
-          {openMenu ? <X /> : <Menu />}
-        </button>
+        {!isDesktop && (
+          <button
+            type="button"
+            onClick={handleToggleMenu}
+            aria-label={openMenu ? "Close menu" : "Open menu"}
+            className="rounded-full p-2 hover:bg-gray-100 transition-colors"
+          >
+            {openMenu ? <X /> : <Menu />}
+          </button>
+        )}
+        <ShopCart />
+
+        {isDesktop && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="rounded-full p-2 hover:bg-gray-100 transition-colors">
+                <User2Icon className="w-5 h-5" />
+              </button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent
+              align="end"
+              className="w-64 p-2 rounded-2xl shadow-lg"
+            >
+              <div className="flex flex-col items-center gap-2 pb-4 pt-2 border-b border-gray-100 mb-1">
+                <CircleUserIcon
+                  className="w-14 h-14 text-gray-300"
+                  strokeWidth={1}
+                />
+
+                <div className="text-center">
+                  <p className="font-semibold text-sm">{user.name}</p>
+                  <p className="text-xs text-gray-400">{user.email}</p>
+                </div>
+              </div>
+
+              <DropdownMenuItem
+                asChild
+                className="cursor-pointer rounded-lg px-3 py-2.5 font-medium text-gray-700"
+              >
+                <Link
+                  to="/shop/account"
+                  className="flex w-full items-center"
+                >
+                  <User className="mr-2.5 h-4 w-4 text-gray-400 transition-colors" />
+                  <span>Account</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => dispatch(logoutUser())}
+                className="group cursor-pointer rounded-lg px-3 py-2.5 font-medium text-rose-600 data-[highlighted]:bg-rose-50 data-[highlighted]:text-rose-700"
+              >
+                <LogOut className="mr-2.5 h-4 w-4 text-rose-400 group-data-[highlighted]:text-rose-700 transition-colors" />
+                <span>Logout</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
     </div>
   );

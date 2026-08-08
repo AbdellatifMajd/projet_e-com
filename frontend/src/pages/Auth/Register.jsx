@@ -25,7 +25,7 @@ function Register() {
     
   }
   return (
-    <div className=" space-y-6 max-w-md w-full  p-6 sm:p-8 border rounded-3xl">
+    <div className=" space-y-6 max-w-md w-full  p-6 sm:p-8 border border-gray-500 rounded-3xl shadow-xl">
       <div className="">
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
           Create new account

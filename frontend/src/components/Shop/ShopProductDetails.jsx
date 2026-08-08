@@ -12,42 +12,61 @@ import {
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { toggleFavorites } from "@/store/ShopProductSlice";
+import { fetchProductDetails, toggleFavorites } from "@/store/ShopProductSlice";
+import ProductReviews from "./ProductReviews";
+import { addToCart } from "@/store/ShopCartSlice";
+import { toast } from "sonner";
 
 function ShopProductDetails() {
-  const { id } = useParams(); 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const { productList, favorites, isLoading } = useSelector(
+  
+  const { favorites, isLoading, productDetails } = useSelector(
     (state) => state.shopProduct,
   );
+  const { id } = useParams();
+  const userId = useSelector((state) => state.auth.user?.id);
 
   // On cherche le produit dans la liste déjà chargée en store.
   // Si productList est vide au premier chargement direct de l'URL,
   // il faudra dispatcher une action de fetch par id (voir note en bas).
-  const product = productList?.find((p) => String(p.id) === String(id));
+  const product = productDetails;
 
   const favorite = favorites?.includes(product?.id);
 
   const outOfStock = product?.totalStock === 0;
   const onSale = product?.salePrice > 0;
 
+  useEffect(() => {
+    dispatch(fetchProductDetails(id));
+  }, [dispatch, id]);
+
   const handleToggleFavorites = (e) => {
     e.stopPropagation();
     dispatch(toggleFavorites(product.id));
   };
 
-  const handleAddToCart = () => {
-    // À relier à ton action addToCart existante
-    console.log("Add to cart:", product?.id);
-  };
+  const handleAddToCart = async() => {
+      try{
+        const result = await dispatch(addToCart({userId, productId: id})).unwrap();
+        console.log("result: ", result)
+        toast.success(result?.message)
+      }
+      catch(e){
+        toast.error(e.message)
+      }
+  }
+
+
 
   let badge = null;
   if (outOfStock) {
     badge = { label: "Out of stock", color: "#ef4444" };
   } else if (product?.totalStock < 10) {
-    badge = { label: `Only ${product?.totalStock} left in stock`, color: "#f97316" };
+    badge = {
+      label: `Only ${product?.totalStock} left in stock`,
+      color: "#f97316",
+    };
   } else if (onSale) {
     badge = { label: "Sale", color: "#10b981" };
   }
@@ -79,7 +98,7 @@ function ShopProductDetails() {
           gap: 2,
         }}
       >
-        <Typography variant="h6">Produit introuvable</Typography>
+        <Typography variant="h6">Product not found</Typography>
         <Button variant="outlined" onClick={() => navigate("/shop/home")}>
           Back to shop
         </Button>
@@ -177,20 +196,33 @@ function ShopProductDetails() {
                 textDecoration: onSale ? "line-through" : "none",
               }}
             >
-              ${product?.price}
+              {product?.price} MAD
             </Typography>
             {onSale && (
-              <Typography variant="h5" sx={{ fontWeight: 700, color: "primary.main" }}>
-                ${product?.salePrice}
+              <Typography
+                variant="h5"
+                sx={{ fontWeight: 700, color: "primary.main" }}
+              >
+                {product?.salePrice} MAD
               </Typography>
             )}
           </Box>
 
           {product?.description && (
-            <Typography variant="body1" sx={{ color: "text.secondary", lineHeight: 1.7 }}>
+            <Typography
+              variant="body1"
+              sx={{ color: "text.secondary", lineHeight: 1.7 }}
+            >
               {product.description}
             </Typography>
           )}
+
+          <ProductReviews
+            avgRating={4.2}
+            reviewCount={128}
+            reviews={[]}
+            canReview={true}
+          />
 
           <Button
             variant="contained"

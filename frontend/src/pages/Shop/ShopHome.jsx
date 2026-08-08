@@ -55,11 +55,6 @@ function ShopHome() {
   }
 
 
-  function handleAddToCart(productId, totalStock) {
-    if (totalStock <= 0) return;
-    // TODO: brancher sur votre thunk du panier, ex:
-    // dispatch(addToCart({ productId, quantity: 1 }));
-  }
 
   const sortLabel = useMemo(
     () => sortOptions.find((s) => s.id === sort)?.label ?? "Sort",
@@ -111,7 +106,6 @@ function ShopHome() {
                 <ShoppingProductTile
                   key={productItem.id}
                   product={productItem}
-                  handleAddToCart={handleAddToCart}
                 />
               ))}
             </div>

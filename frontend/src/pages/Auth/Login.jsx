@@ -27,7 +27,7 @@ function Login() {
   };
 
   return (
-    <div className="w-full max-w-lg space-y-6 rounded-3xl border border-gray-500 bg-white p-6 shadow-xl dark:border-gray-800 dark:bg-zinc-950 sm:p-8">
+    <div className="w-full max-w-lg space-y-6 rounded-3xl border border-gray-500 p-6 shadow-xl sm:p-8">
       <div className="flex items-center space-x-2">
         <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-gray-50">
           Welcome Back,

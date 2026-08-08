@@ -1,11 +1,20 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const loadFavorites = () => {
+  try {
+    return JSON.parse(localStorage.getItem("favorites")) || [];
+  } catch {
+    return [];
+  }
+};
+
 const initialState = {
   isLoading: false,
   productList: [],
-  favorites: [], 
-  openMenu: false
+  favorites: loadFavorites(),
+  openMenu: false,
+  productDetails: null,
 };
 
 export const fetchAllFilteredProducts = createAsyncThunk(
@@ -26,13 +35,28 @@ export const fetchAllFilteredProducts = createAsyncThunk(
       }
 
       const response = await axios.get(
-        `http://localhost:8000/api/shop/products/get?${query.toString()}`
+        `http://localhost:8000/api/shop/products/get?${query.toString()}`,
       );
       return response?.data;
     } catch (error) {
       return rejectWithValue(error.response?.data);
     }
-  }
+  },
+);
+
+export const fetchProductDetails = createAsyncThunk(
+  "shop/fetchProductDetails",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/api/shop/products/get/${id}`,
+      );
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data);
+    }
+  },
 );
 
 const ShopProductSlice = createSlice({
@@ -48,11 +72,11 @@ const ShopProductSlice = createSlice({
       } else {
         state.favorites.splice(index, 1);
       }
-
-      state.openMenu = true; // ✅ ouvre le menu à chaque toggle (ajout ou retrait)
+      state.openMenu = true;
+      localStorage.setItem("favorites", JSON.stringify(state.favorites));
     },
     setOpenMenu: (state, action) => {
-      state.openMenu = action.payload; // ✅ pour fermer le menu manuellement (bouton X, clic extérieur...)
+      state.openMenu = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -67,9 +91,24 @@ const ShopProductSlice = createSlice({
       .addCase(fetchAllFilteredProducts.rejected, (state) => {
         state.isLoading = false;
         state.productList = [];
+      })
+
+      
+      .addCase(fetchProductDetails.pending, (state) => {
+        state.isLoading = true;
+      })
+
+      .addCase(fetchProductDetails.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.productDetails = action.payload.data;
+      })
+
+      .addCase(fetchProductDetails.rejected, (state) => {
+        state.isLoading = false;
+        state.productDetails = null;
       });
   },
 });
 
-export const {toggleFavorites, setOpenMenu} = ShopProductSlice.actions; 
+export const { toggleFavorites, setOpenMenu } = ShopProductSlice.actions;
 export default ShopProductSlice.reducer;

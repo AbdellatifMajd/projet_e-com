@@ -11,19 +11,20 @@ import {
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import { useDispatch, useSelector } from "react-redux"; 
+import { useDispatch, useSelector } from "react-redux";
 import { toggleFavorites } from "@/store/ShopProductSlice";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { addToCart } from "@/store/ShopCartSlice";
+import { toast } from "sonner";
 
-function ShoppingProductTile({
-  product,
-  handleAddToCart,
-}) {
+function ShoppingProductTile({ product }) {
   const outOfStock = product?.totalStock === 0;
   const onSale = product?.salePrice > 0;
+  const userId = useSelector((state) => state.auth?.user.id);
 
   const dispatch = useDispatch();
-  const navigate= useNavigate();
+  const navigate = useNavigate();
 
   const { favorites } = useSelector((state) => state.shopProduct);
   const favorite = favorites.includes(product?.id);
@@ -32,12 +33,24 @@ function ShoppingProductTile({
     e.stopPropagation();
     dispatch(toggleFavorites(product.id));
   };
+const handleAddToCart = async () => {
+  try {
+    const data = await dispatch(addToCart({ userId, productId: product?.id })).unwrap();
+    toast.success(data.message);
+  } catch (error) {
+    toast.error(error.message);
+  }
+};
+
 
   let badge = null;
   if (outOfStock) {
     badge = { label: "Out of stock", color: "#ef4444" };
   } else if (product?.totalStock < 10) {
-    badge = { label: `Only ${product?.totalStock} left in stock`, color: "#f97316" };
+    badge = {
+      label: `Only ${product?.totalStock} left in stock`,
+      color: "#f97316",
+    };
   } else if (onSale) {
     badge = { label: "Sale", color: "#10b981" };
   }
@@ -158,11 +171,14 @@ function ShoppingProductTile({
                 textDecoration: onSale ? "line-through" : "none",
               }}
             >
-              ${product?.price}
+              {product?.price} MAD
             </Typography>
             {onSale && (
-              <Typography variant="subtitle1" sx={{ fontWeight: 600, color: "primary.main" }}>
-                ${product?.salePrice}
+              <Typography
+                variant="subtitle1"
+                sx={{ fontWeight: 600, color: "primary.main" }}
+              >
+                {product?.salePrice} MAD
               </Typography>
             )}
           </Box>
@@ -175,8 +191,13 @@ function ShoppingProductTile({
           variant="contained"
           disableElevation
           disabled={outOfStock}
-          onClick={() => handleAddToCart?.(product?.id, product?.totalStock)}
-          sx={{ borderRadius: 2, textTransform: "none", fontWeight: 600, py: 1 }}
+          onClick={ handleAddToCart }
+          sx={{
+            borderRadius: 2,
+            textTransform: "none",
+            fontWeight: 600,
+            py: 1,
+          }}
         >
           {outOfStock ? "Out of stock" : "Add to cart"}
         </Button>

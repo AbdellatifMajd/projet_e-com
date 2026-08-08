@@ -15,6 +15,7 @@ import Skeleton from "@mui/material/Skeleton";
 import ShopLayout from "./pages/Layouts/ShopLayout";
 import ShopHome from "./pages/Shop/ShopHome";
 import ShopProductDetails from "./components/Shop/ShopProductDetails";
+import ShopAccount from "./components/Shop/ShopAccount";
 
 function App() {
   const { isAuthenticated, user, isLoading } = useSelector((state) => state.auth);
@@ -116,6 +117,7 @@ function App() {
         >
           <Route path="home" element={<ShopHome />}/>
           <Route path="product/:id" element={<ShopProductDetails />}/>
+          <Route path="account" element={<ShopAccount />}/>
         </Route>
       </Routes>
     </>

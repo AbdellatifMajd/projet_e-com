@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -39,4 +40,11 @@ Route::prefix("admin/products")->group(function(){
 
 Route::prefix("shop/products")->group(function(){
     Route::get("/get", [ProductController::class, "getFilteredProducts"]);
+    Route::get("/get/{id}", [ProductController::class, "getProductDetails"]);
+});
+
+Route::prefix("shop/cart")->group(function(){
+    Route::get("/items/{userId}", [CartController::class, "index"]);
+    Route::post("/add", [CartController::class, "store"]);
+    Route::delete("/delete", [CartController::class, "destroy"]);
 });
