@@ -85,11 +85,9 @@ function ShopHeader() {
 
   const handleToggleMenu = () => dispatch(setOpenMenu(!openMenu));
 
-  const handleAddToCart = (item) => {};
-
   return (
     <div className="flex items-center justify-between gap-4 border-b p-3">
-      <Link to="/" className="shrink-0">
+      <Link to="/shop/home" className="shrink-0">
         <img
           src="/logo_articia.webp"
           alt="articia"

@@ -16,11 +16,12 @@ import {
 import { Minus, Plus, ShoppingCart, Trash2, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const formatPrice = (value) => `${Number(value).toFixed(2)} DH`;
 
-function CartItemRow({ item, onIncrease, onDecrease, onRemove }) {
+export function CartItemRow({ item, onIncrease, onDecrease, onRemove }) {
   return (
     <div className="flex gap-3.5 pb-4.5 border-b border-gray-100 last:border-0">
       <img
@@ -83,6 +84,7 @@ function CartItemRow({ item, onIncrease, onDecrease, onRemove }) {
 
 
 function ShopCart() {
+  const navigate = useNavigate();
   const [openCart, setOpenCart] = useState(false);
   const dispatch = useDispatch();
   const { cartItems } = useSelector((state) => state.shopCart);
@@ -90,17 +92,13 @@ function ShopCart() {
 
   const items = cartItems?.items ?? [];
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
-  const total = items.reduce(
-    (sum, item) => sum + item.product?.price * item.quantity,
-    0,
-  );
+  const total = items.reduce((sum, item) => sum + item.product?.price * item.quantity, 0);
 
   useEffect(() => {
     if (userId) dispatch(fetchCartItems(userId));
   }, [userId]);
 
 const handleOnRemove = async (productId) => {
-    console.log("User ID:", userId, "Product ID:", productId);
   try {
     const result = await dispatch(removeFromCart({userId, productId})).unwrap();
     toast.success(result.message);
@@ -188,6 +186,10 @@ const handleOnRemove = async (productId) => {
             <Button
               variant="contained"
               fullWidth
+              onClick={()=>{
+                navigate("/shop/checkout");
+                setOpenCart(false);
+              }}
               disableElevation
               sx={{
                 color: "white",

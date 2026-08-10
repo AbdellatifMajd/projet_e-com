@@ -83,15 +83,10 @@ public function store(Request $req){
     }
 }
 
-public function destroy(Request $req)
-{
-    $validated = $req->validate([
-        'userId'    => 'required|integer|exists:users,id',
-        'productId' => 'required|integer|exists:products,id',
-    ]);
-
+public function destroy($userId, $productId){
     try {
-        $cart = Cart::where('user_id', $validated['userId'])->first();
+        // 1. Récupération du panier de l'utilisateur
+        $cart = Cart::where('user_id', $userId)->first();
 
         if (!$cart) {
             return response()->json([
@@ -100,7 +95,8 @@ public function destroy(Request $req)
             ], 404);
         }
 
-        $cartItem = $cart->items()->where('product_id', $validated['productId'])->first();
+        // 2. Recherche de l'élément dans le panier
+        $cartItem = $cart->items()->where('product_id', $productId)->first();
 
         if (!$cartItem) {
             return response()->json([
@@ -109,8 +105,10 @@ public function destroy(Request $req)
             ], 404);
         }
 
+        // 3. Suppression de l'élément
         $cartItem->delete();
 
+        // 4. Retour de la réponse avec le panier rechargé
         return response()->json([
             'success' => true,
             'data'    => $cart->load('items.product'),

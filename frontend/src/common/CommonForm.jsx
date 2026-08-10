@@ -51,10 +51,11 @@ function CommonForm({
   setFormData,
   onSubmit,
   buttonText,
+  isBtnDisabled
 }) {
   return (
     <form onSubmit={onSubmit} className="w-full mx-auto">
-      <div className="space-y-4 mb-6 w-full">
+      <div className="space-y-4 mb-6 w-full mt-3">
         {formControls.map((item) => (
           <div key={item.id || item.name} className="w-full">
             {renderInputsByComponentType(item, formData, setFormData)}
@@ -63,6 +64,7 @@ function CommonForm({
       </div>
 
       <Button
+      disabled={isBtnDisabled}
         variant="contained"
         type="submit"
         size="large"

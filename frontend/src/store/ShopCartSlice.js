@@ -27,15 +27,18 @@ export const fetchCartItems = createAsyncThunk("shop/cart/get", async(userId, {r
     }
 });
 
-export const removeFromCart = createAsyncThunk("shop/cart/remove", async({userId, productId}, {rejectWithValue})=>{
-    try{
-        const response = await axios.delete("http://localhost:8000/api/shop/cart/delete", {data: {userId, productId}})
-        return response.data;
+export const removeFromCart = createAsyncThunk(
+  "shop/cart/remove",
+  async ({ userId, productId }, { rejectWithValue }) => {
+    try {
+      const response = await axios.delete(`http://localhost:8000/api/shop/cart/delete/${userId}/${productId}`);
+      return response.data;
+    } catch (e) {
+        console.log("Erreurs de validation Laravel :", e.response?.data?.errors);
+      return rejectWithValue(e.response?.data?.message || "Failed to remove item");
     }
-    catch(e){
-        rejectWithValue(e.response.data)
-    }
-});
+  }
+);
 
 const ShopCartSlice = createSlice({
     name: "shopCart", 
@@ -63,9 +66,10 @@ const ShopCartSlice = createSlice({
         .addCase(fetchCartItems.rejected, (state, action) => {state.error=action.payload})
 
 
-        .addCase(removeFromCart.pending, (state) => {state.isLoading=true})
-        .addCase(removeFromCart.fulfilled, (state, action) => {state.isLoading=false, state.cartItems=action.payload?.data})
-        .addCase(removeFromCart.rejected, (state, action) => {state.error=action.payload})
+        .addCase(removeFromCart.pending, (state) => {state.isLoading = true})
+        .addCase(removeFromCart.fulfilled, (state, action) => {state.isLoading = false; state.cartItems = action.payload?.data})
+        .addCase(removeFromCart.rejected, (state, action) => {state.isLoading = false; state.error = action.payload});
+        
     }
 })
 

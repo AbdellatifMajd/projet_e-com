@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
@@ -46,5 +47,12 @@ Route::prefix("shop/products")->group(function(){
 Route::prefix("shop/cart")->group(function(){
     Route::get("/items/{userId}", [CartController::class, "index"]);
     Route::post("/add", [CartController::class, "store"]);
-    Route::delete("/delete", [CartController::class, "destroy"]);
+    Route::delete("/delete/{userId}/{productId}", [CartController::class, "destroy"]);
+});
+
+Route::prefix('shop/address')->group(function(){
+    Route::get("/{userId}", [AddressController::class, "index"]);
+    Route::post("/add", [AddressController::class, "store"]);
+    Route::put("/update/{userId}/{addressId}", [AddressController::class, "update"]);
+    Route::delete("/delete/{userId}/{addressId}", [AddressController::class, "destroy"]);
 });
