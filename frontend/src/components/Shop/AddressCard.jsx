@@ -1,11 +1,16 @@
 import { deleteAddress, fetchAddress } from "@/store/AddressSlice";
 import { Card, CardContent } from "@mui/material";
 import { MapPin, Pencil, Trash2 } from "lucide-react";
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 
-function AddressCard({ addressInfos, isDefault, handleEditAddress }) {
+function AddressCard({
+  addressInfos,
+  isDefault,
+  handleEditAddress,
+  setCurrentSelectedAddress,
+}) {
   const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
 
@@ -22,9 +27,9 @@ function AddressCard({ addressInfos, isDefault, handleEditAddress }) {
       return toast.error(e);
     }
   };
-
   return (
     <Card
+      onClick={() => setCurrentSelectedAddress?.(addressInfos)}
       elevation={0}
       className="border border-gray-200 rounded-2xl hover:border-gray-400 hover:shadow-sm transition-all group"
     >

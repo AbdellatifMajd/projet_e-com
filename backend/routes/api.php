@@ -3,6 +3,7 @@
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -55,4 +56,10 @@ Route::prefix('shop/address')->group(function(){
     Route::post("/add", [AddressController::class, "store"]);
     Route::put("/update/{userId}/{addressId}", [AddressController::class, "update"]);
     Route::delete("/delete/{userId}/{addressId}", [AddressController::class, "destroy"]);
+});
+
+
+Route::prefix('order')->group(function(){
+    Route::post('/create', [OrderController::class, 'createOrder']);
+    Route::post('/capture', [OrderController::class, 'capturePayment']);
 });

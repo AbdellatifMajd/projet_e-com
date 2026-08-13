@@ -17,6 +17,9 @@ import ShopHome from "./pages/Shop/ShopHome";
 import ShopProductDetails from "./components/Shop/ShopProductDetails";
 import ShopAccount from "./components/Shop/ShopAccount";
 import ShopCheckout from "./components/Shop/ShopCheckout";
+import AdminOrders from "./pages/Admin/AdminOrders";
+import PaypalReturnPage from "./components/paypal/PaypalReturnPage";
+import PaypalSuccessPage from "./components/paypal/PaypalSuccessPage";
 
 function App() {
   const { isAuthenticated, user, isLoading } = useSelector((state) => state.auth);
@@ -102,6 +105,7 @@ function App() {
         >
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="products" element={<AdminProdcut />} />
+          <Route path="orders" element={<AdminOrders />} />
         </Route>
 
         <Route
@@ -120,6 +124,8 @@ function App() {
           <Route path="product/:id" element={<ShopProductDetails />}/>
           <Route path="checkout" element={<ShopCheckout />}/>
           <Route path="account" element={<ShopAccount />}/>
+          <Route path="paypal-return" element={<PaypalReturnPage />}/>
+          <Route path="payment-success" element={<PaypalSuccessPage />}/>
         </Route>
       </Routes>
     </>

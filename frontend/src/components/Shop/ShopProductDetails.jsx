@@ -30,12 +30,11 @@ function ShopProductDetails() {
   // On cherche le produit dans la liste déjà chargée en store.
   // Si productList est vide au premier chargement direct de l'URL,
   // il faudra dispatcher une action de fetch par id (voir note en bas).
-  const product = productDetails;
 
-  const favorite = favorites?.includes(product?.id);
+  const favorite = favorites?.includes(productDetails?.id);
 
-  const outOfStock = product?.totalStock === 0;
-  const onSale = product?.salePrice > 0;
+  const outOfStock = productDetails?.totalStock === 0;
+  const onSale = productDetails?.salePrice > 0;
 
   useEffect(() => {
     dispatch(fetchProductDetails(id));
@@ -43,7 +42,7 @@ function ShopProductDetails() {
 
   const handleToggleFavorites = (e) => {
     e.stopPropagation();
-    dispatch(toggleFavorites(product.id));
+    dispatch(toggleFavorites(productDetails.id));
   };
 
   const handleAddToCart = async() => {
@@ -62,9 +61,9 @@ function ShopProductDetails() {
   let badge = null;
   if (outOfStock) {
     badge = { label: "Out of stock", color: "#ef4444" };
-  } else if (product?.totalStock < 10) {
+  } else if (productDetails?.totalStock < 10) {
     badge = {
-      label: `Only ${product?.totalStock} left in stock`,
+      label: `Only ${productDetails?.totalStock} left in stock`,
       color: "#f97316",
     };
   } else if (onSale) {
@@ -86,7 +85,7 @@ function ShopProductDetails() {
     );
   }
 
-  if (!product) {
+  if (!productDetails) {
     return (
       <Box
         sx={{
@@ -134,8 +133,8 @@ function ShopProductDetails() {
         >
           <Box
             component="img"
-            src={product?.imageUrl}
-            alt={product?.title}
+            src={productDetails?.imageUrl}
+            alt={productDetails?.title}
             sx={{
               width: "100%",
               height: "100%",
@@ -184,7 +183,7 @@ function ShopProductDetails() {
         {/* Infos produit */}
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <Typography variant="h4" sx={{ fontWeight: 700 }}>
-            {product?.title}
+            {productDetails?.title}
           </Typography>
 
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
@@ -196,24 +195,24 @@ function ShopProductDetails() {
                 textDecoration: onSale ? "line-through" : "none",
               }}
             >
-              {product?.price} MAD
+              {productDetails?.price} MAD
             </Typography>
             {onSale && (
               <Typography
                 variant="h5"
                 sx={{ fontWeight: 700, color: "primary.main" }}
               >
-                {product?.salePrice} MAD
+                {productDetails?.salePrice} MAD
               </Typography>
             )}
           </Box>
 
-          {product?.description && (
+          {productDetails?.description && (
             <Typography
               variant="body1"
               sx={{ color: "text.secondary", lineHeight: 1.7 }}
             >
-              {product.description}
+              {productDetails.description}
             </Typography>
           )}
 

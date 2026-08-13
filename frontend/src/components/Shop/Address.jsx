@@ -13,7 +13,7 @@ import { addAddress, fetchAddress, updateAddress } from "@/store/AddressSlice";
 import { toast } from "sonner";
 import AddressCard from "./AddressCard";
 
-function Address() {
+function Address({setCurrentSelectedAddress}) {
   const initialState = {
     address: "",
     city: "",
@@ -105,6 +105,7 @@ return (
             addressInfos={addressItem}
             isDefault={index === 0}
             handleEditAddress={handleEditAddress}
+            setCurrentSelectedAddress={setCurrentSelectedAddress}
           />
         ))}
     </div>

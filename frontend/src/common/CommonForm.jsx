@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, TextareaAutosize, TextField } from "@mui/material";
+import { Button, MenuItem, Select, TextareaAutosize, TextField } from "@mui/material";
 
 const renderInputsByComponentType = (item, formData, setFormData) => {
   const value = formData[item.name] || "";
@@ -23,22 +23,48 @@ const renderInputsByComponentType = (item, formData, setFormData) => {
       );
 
     case "textarea":
-  return (
-    <TextField
-      variant="outlined"
-      label={item.label}
-      value={value}
-      onChange={(e) =>
-        setFormData({
-          ...formData,
-          [item.name]: e.target.value,
-        })
-      }
-      multiline
-      rows={4}
-      fullWidth
-    />
-  );
+      return (
+        <TextField
+          variant="outlined"
+          label={item.label}
+          value={value}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              [item.name]: e.target.value,
+            })
+          }
+          multiline
+          rows={4}
+          fullWidth
+        />
+      );
+
+    case "select":
+      return (
+        <Select
+          value={value}
+          onChange={(e) =>{
+            console.log("Selected:", e.target.value);
+            setFormData({
+              ...formData,
+              [item.name]: e.target.value,
+            })}
+          }
+          fullWidth
+          displayEmpty
+        >
+          <MenuItem value="" disabled>
+            {item.label}
+          </MenuItem>
+
+          {item.options.map((option) => (
+            <MenuItem key={option.id} value={option.id}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </Select>
+      );
 
     default:
       return null;

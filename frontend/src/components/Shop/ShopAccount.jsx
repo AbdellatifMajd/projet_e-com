@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Box, Tab, Tabs } from "@mui/material";
 
-import Orders from "./Orders";
 import Address from "./Address";
+import ShopOrders from "./ShopOrders";
 
 function ShopAccount() {
   const [activeTab, setActiveTab] = useState("address");
@@ -57,7 +57,7 @@ function ShopAccount() {
 
       {/* Tab content */}
       <div className="w-full px-6 py-6">
-        {activeTab === "orders" && <Orders />}
+        {activeTab === "orders" && <ShopOrders />}
         {activeTab === "address" && <Address />}
       </div>
     </div>

@@ -1,38 +1,38 @@
 export const registerFormControls = [
-    {
-        name: "username",
-        label: "User Name",
-        componentType: "input", 
-        type: "text"
-    },
-    {
-        name: "email",
-        label: "Email",
-        componentType: "input", 
-        type: "text"
-    },
-    {
-        name: "password",
-        label: "Password",
-        componentType: "input", 
-        type: "password"
-    },
-]
+  {
+    name: "username",
+    label: "User Name",
+    componentType: "input",
+    type: "text",
+  },
+  {
+    name: "email",
+    label: "Email",
+    componentType: "input",
+    type: "text",
+  },
+  {
+    name: "password",
+    label: "Password",
+    componentType: "input",
+    type: "password",
+  },
+];
 
 export const loginFormControls = [
-    {
-        name: "email",
-        label: "Email", 
-        componentType: "input",
-        type: "text"
-    },
-    {
-        name: "password",
-        label: "Password", 
-        componentType: "input", 
-        type: "password"
-    }
-]
+  {
+    name: "email",
+    label: "Email",
+    componentType: "input",
+    type: "text",
+  },
+  {
+    name: "password",
+    label: "Password",
+    componentType: "input",
+    type: "password",
+  },
+];
 
 export const addProductFormElements = [
   {
@@ -63,7 +63,7 @@ export const addProductFormElements = [
     type: "number",
     placeholder: "Enter total stock",
   },
-    {
+  {
     label: "Description",
     name: "description",
     componentType: "textarea",
@@ -124,5 +124,20 @@ export const addressFormControls = [
     name: "notes",
     componentType: "textarea",
     placeholder: "Enter any additional notes",
+  },
+];
+
+export const orderDetailsOptions = [
+  {
+    label: "Order Status",
+    name: "status",
+    componentType: "select",
+    options: [
+      { id: "pending", label: "Pending" },
+      { id: "inProcess", label: "In Process" },
+      { id: "inShipping", label: "In Shipping" },
+      { id: "delivered", label: "Delivered" },
+      { id: "rejected", label: "Rejected" },
+    ],
   },
 ];
