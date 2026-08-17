@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Address from "./Address";
 import { useDispatch, useSelector } from "react-redux";
 import { CartItemRow } from "./ShopCart";
-import { Button, Typography } from "@mui/material";
+import { Button, Typography, Alert } from "@mui/material";
 import { removeFromCart } from "@/store/ShopCartSlice";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -95,11 +95,11 @@ function ShopCheckout() {
       setIsPaymentStart(true);
     } else {
       setIsPaymentStart(false);
-      toast.error(result?.message || "Impossible de créer la commande");
+      toast.error(result?.message);
     }
   } catch (errorMessage) {
     setIsPaymentStart(false);
-    toast.error(errorMessage || "Erreur lors de la création de la commande");
+    toast.error(errorMessage);
   }
 
   }
@@ -122,7 +122,19 @@ function ShopCheckout() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-5 p-5">
-        <Address setCurrentSelectedAddress={setCurrentSelectedAddress}/>
+        <div className="flex flex-col gap-3">
+          {/* Indication UI : étape 1 = choisir une adresse */}
+          
+
+          {!currentSelectedAddress && (
+            <Alert severity="warning" sx={{ borderRadius: 2 }}>
+              Please select (or add) an address before continuing.
+            </Alert>
+          )}
+
+          <Address setCurrentSelectedAddress={setCurrentSelectedAddress} />
+        </div>
+
         <div className="flex flex-col gap-4">
           {items.length > 0 ? (
             items.map((item) => (
@@ -133,24 +145,30 @@ function ShopCheckout() {
               />
             ))
           ) : (
-            <Typography color="text.secondary">
+            <Typography color="primary">
               Cart empty.
             </Typography>
           )}
 
           <div className="flex items-center justify-between px-1">
-            <Typography color="text.secondary" fontSize={13.5}>
+            <Typography color="primary" fontSize={13.5}>
               Total
             </Typography>
-            <Typography fontWeight={500} fontSize={19}>
+            <Typography fontWeight={500} fontSize={19} color="primary" >
               {`${total.toFixed(2)} DH`}
             </Typography>
           </div>
 
+          {!currentSelectedAddress && items.length > 0 && (
+            <Typography color="warning" fontSize={13} sx={{ px: 0.5 }}>
+              A shipping address is required to complete your order.
+            </Typography>
+          )}
+
           <Button
             variant="contained"
             fullWidth
-            disabled={items.length === 0}
+            disabled={items.length === 0 || !currentSelectedAddress}
             onClick={() => {
               handleInitiatePaypalPayment()
             }}
@@ -162,7 +180,9 @@ function ShopCheckout() {
               fontWeight: 500,
             }}
           >
-            Checkout with PayPal
+            {!currentSelectedAddress
+              ? "Select a shipping address to continue"
+              : "Checkout with PayPal"}
           </Button>
         </div>
       </div>

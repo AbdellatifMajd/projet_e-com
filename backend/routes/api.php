@@ -62,4 +62,6 @@ Route::prefix('shop/address')->group(function(){
 Route::prefix('order')->group(function(){
     Route::post('/create', [OrderController::class, 'createOrder']);
     Route::post('/capture', [OrderController::class, 'capturePayment']);
+    Route::get("/details/{userId}", [OrderController::class, 'getAllOrdersByUserId']);
+    Route::get("/{orderId}", [OrderController::class, 'getOrderDetails']);
 });

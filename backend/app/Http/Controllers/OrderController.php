@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -168,6 +169,8 @@ public function createOrder(Request $request)
 
     //capture payment
     public function capturePayment(Request $request){
+            Log::info('Capture payment request:', $request->all());
+
     $validated = $request->validate([
         'paymentId' => 'required|string',
         'payerId' => 'nullable|string',
@@ -229,4 +232,56 @@ public function createOrder(Request $request)
     }
 }
 
+
+//getOrdeDetails 
+public function getAllOrdersByUserId($userId){
+    try{
+        $order = Order::with(['items'])
+            ->where('user_id', $userId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        if (!$order) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found'
+            ], 404);
+        }
+        return response()->json([
+            'success' => true, 
+            'data' => $order
+        ], 200);
+    }
+    catch(Exception $e){
+        Log::error($e);
+        return response()->json([
+            'success' => false,
+            'message' => 'An error occured: ' . $e->getMessage()]
+            , 500);
+    }
+}
+
+public function getOrderDetails($orderId){
+    try{
+        $order = Order::with(['items'])->where("id", $orderId)->first();
+        
+        if(!$order){
+            return response()->json([
+                'success' => false, 
+                'message' => 'Order not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true, 
+            'data' => $order
+        ], 200);
+    }
+    catch(Exception $e){
+        return response()->json([
+            'success' => false, 
+            'message' => "An error occured. " . $e->getMessage()
+        ], 500);
+    }
+
+}
 }

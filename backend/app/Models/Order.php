@@ -31,7 +31,7 @@ class Order extends Model
         
     protected $casts = [
             'order_date' => 'datetime',
-            'order_updated_date' => 'datetiem', 
+            'order_updated_date' => 'datetime', 
             'total_amount' => 'decimal:2'
     ];
 
