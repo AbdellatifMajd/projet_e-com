@@ -89,7 +89,6 @@ function ShopCheckout() {
 
     try {
     const result = await dispatch(createOrder(orderData)).unwrap();
-    console.log("approval URL", result?.approvalURL);
 
     if (result?.success) {
       setIsPaymentStart(true);

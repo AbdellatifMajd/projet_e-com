@@ -12,100 +12,140 @@ const initialState = {
 
 // CREATE ORDER
 export const createOrder = createAsyncThunk(
-  "/order/createNewOrder",
+  "order/createOrder",
   async (orderData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
         "http://localhost:8000/api/order/create",
         orderData,
       );
-
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || "Failed to create order");
+      return rejectWithValue(
+        error.response?.data?.message ||
+          error.response?.data ||
+          "Failed to create order",
+      );
     }
   },
 );
 
 // CAPTURE PAYMENT
 export const capturePayment = createAsyncThunk(
-  "/order/capturePayment",
+  "order/capturePayment",
   async ({ paymentId, payerId, orderId }, { rejectWithValue }) => {
     try {
       const response = await axios.post(
         "http://localhost:8000/api/order/capture",
-        {
-          paymentId,
-          payerId,
-          orderId,
-        },
+        { paymentId, payerId, orderId },
       );
-
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data || "Failed to capture payment",
+        error.response?.data?.message ||
+          error.response?.data ||
+          "Failed to capture payment",
       );
     }
   },
 );
 
-// GET ORDER DETAILS
+// GET ALL USER ORDERS
 export const getAllOrdersByUserId = createAsyncThunk(
-  "/order/getDetails",
+  "order/getAllOrdersByUserId",
   async (id, { rejectWithValue }) => {
     try {
       const response = await axios.get(
         `http://localhost:8000/api/order/details/${id}`,
       );
-
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.message);
+      return rejectWithValue(error.response?.data?.message || error.message);
     }
   },
 );
 
-export const getOrderDetails = createAsyncThunk(`/order`, async(orderId, {rejectWithValue}) =>{
-  console.log("thunk lancé avec orderId:", orderId); // celui-ci, précisément
-  try{
-    const response = await axios.get(`http://localhost:8000/api/order/${orderId}`);
-    return response.data;
+// GET CLIENT ORDER DETAILS
+export const getOrderDetails = createAsyncThunk(
+  "order/getOrderDetails",
+  async (orderId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/api/order/${orderId}`,
+      );
+      return response.data;
+    } catch (e) {
+      return rejectWithValue(e.response?.data?.message || e.message);
+    }
+  },
+);
+
+// GET ALL ADMIN ORDERS
+export const getAllOrdersOfAllUsers = createAsyncThunk(
+  "order/getAllOrdersOfAllUsers",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8000/api/order/details",
+      );
+      return response.data;
+    } catch (e) {
+      return rejectWithValue(e.response?.data?.message || e.message);
+    }
+  },
+);
+
+// GET ADMIN ORDER DETAILS
+export const getAdminOrderDetails = createAsyncThunk(
+  "order/getAdminOrderDetails",
+  async (orderId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/api/order/admin/${orderId}`,
+      );
+      return response.data;
+    } catch (e) {
+      return rejectWithValue(e.response?.data?.message || e.message);
+    }
+  },
+);
+
+// updateOrderStatus
+export const updateOrderStatus = createAsyncThunk(
+  "order/updateOrderStatus",
+  async ({ orderId, status }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:8000/api/order/admin/update/${orderId}`,
+        { order_status: status } 
+      );
+      return response.data;
+    } catch (e) {
+      return rejectWithValue(e.response?.data?.message || "Une erreur est survenue");
+    }
   }
-  catch(e){
-    console.log("erreur catch:", e)
-    return rejectWithValue(e.response.data.message)
-  }
-})
+);
 
 const ShopOrderSlice = createSlice({
   name: "shopOrder",
-
   initialState,
-
   reducers: {
     resetOrderDetails: (state) => {
       state.orderDetails = null;
     },
   },
-
   extraReducers: (builder) => {
     builder
-
-      // =========================
       // CREATE ORDER
-      // =========================
-
       .addCase(createOrder.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-
       .addCase(createOrder.fulfilled, (state, action) => {
         state.isLoading = false;
         state.error = null;
-
-        state.approvalURL = action.payload.approvalUrl;
+        state.approvalURL =
+          action.payload.approvalUrl || action.payload.approvalURL;
         state.orderId = action.payload.orderId;
 
         sessionStorage.setItem(
@@ -113,7 +153,6 @@ const ShopOrderSlice = createSlice({
           JSON.stringify(action.payload.orderId),
         );
       })
-
       .addCase(createOrder.rejected, (state, action) => {
         state.isLoading = false;
         state.approvalURL = null;
@@ -121,23 +160,18 @@ const ShopOrderSlice = createSlice({
         state.error = action.payload;
       })
 
-      // =========================
       // CAPTURE PAYMENT
-      // =========================
-
       .addCase(capturePayment.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-
       .addCase(capturePayment.fulfilled, (state, action) => {
         state.isLoading = false;
         state.error = null;
-
-        state.approvalURL = action.payload.approvalURL;
+        state.approvalURL =
+          action.payload.approvalURL || action.payload.approvalUrl;
         state.orderId = action.payload.orderId;
       })
-
       .addCase(capturePayment.rejected, (state, action) => {
         state.isLoading = false;
         state.approvalURL = null;
@@ -145,37 +179,73 @@ const ShopOrderSlice = createSlice({
         state.error = action.payload;
       })
 
-      // =========================
-      // GET ALL ORDERS
-      // =========================
-
+      // GET ALL CLIENT ORDERS
       .addCase(getAllOrdersByUserId.pending, (state) => {
         state.isLoading = true;
         state.error = null;
-        state.orderDetails = null;
       })
-
       .addCase(getAllOrdersByUserId.fulfilled, (state, action) => {
         state.isLoading = false;
         state.error = null;
         state.orderList = action.payload.data;
       })
-
       .addCase(getAllOrdersByUserId.rejected, (state, action) => {
         state.isLoading = false;
-        state.orderDetails = null;
         state.error = action.payload;
       })
 
-      // =========================
-      // GET ORDER Details
-      // =========================
-      .addCase(getOrderDetails.pending, (state) => {state.isLoading = true})
+      // GET CLIENT ORDER DETAILS
+      .addCase(getOrderDetails.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
       .addCase(getOrderDetails.fulfilled, (state, action) => {
         state.isLoading = false;
         state.orderDetails = action.payload.data;
       })
       .addCase(getOrderDetails.rejected, (state, action) => {
+        state.isLoading = false;
+        state.orderDetails = null;
+        state.error = action.payload;
+      })
+
+      // GET ALL ADMIN ORDERS
+      .addCase(getAllOrdersOfAllUsers.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(getAllOrdersOfAllUsers.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.orderList = action.payload.data;
+      })
+      .addCase(getAllOrdersOfAllUsers.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+
+      // GET ADMIN ORDER DETAILS
+      .addCase(getAdminOrderDetails.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(getAdminOrderDetails.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.orderDetails = action.payload.data;
+      })
+      .addCase(getAdminOrderDetails.rejected, (state, action) => {
+        state.isLoading = false;
+        state.orderDetails = null;
+        state.error = action.payload;
+      })
+
+      .addCase(updateOrderStatus.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateOrderStatus.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.orderDetails = action.payload.data;
+      })
+      .addCase(updateOrderStatus.rejected, (state, action) => {
         state.isLoading = false;
         state.orderDetails = null;
         state.error = action.payload;

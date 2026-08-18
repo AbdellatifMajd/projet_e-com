@@ -1,4 +1,4 @@
-import { deleteAddress, fetchAddress } from "@/store/AddressSlice";
+import { deleteAddress, fetchAddress } from "@/store/ShopAddressSlice";
 import { Card, CardContent } from "@mui/material";
 import { MapPin, Pencil, Trash2 } from "lucide-react";
 import React, { useEffect } from "react";

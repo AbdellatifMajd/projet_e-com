@@ -63,5 +63,8 @@ Route::prefix('order')->group(function(){
     Route::post('/create', [OrderController::class, 'createOrder']);
     Route::post('/capture', [OrderController::class, 'capturePayment']);
     Route::get("/details/{userId}", [OrderController::class, 'getAllOrdersByUserId']);
+    Route::get("/details", [OrderController::class, 'getAllOrdersOfAllUsers']);
     Route::get("/{orderId}", [OrderController::class, 'getOrderDetails']);
+    Route::get("/admin/{orderId}", [OrderController::class, 'getAdminOrderDetails']);
+    Route::put("/admin/update/{orderId}", [OrderController::class, 'updateOrderStatus']);
 });

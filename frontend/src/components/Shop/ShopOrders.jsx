@@ -27,7 +27,6 @@ import {
 } from "@/store/ShopOrderSlice";
 import ShopOrderDetails from "./ShopOrderDetails";
 
-console.log("typeof getOrderDetails:", getOrderDetails);
 
 // Mappe chaque statut à une couleur Chip cohérente
 const STATUS_STYLES = {
