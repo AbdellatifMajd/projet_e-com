@@ -3,6 +3,7 @@
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
@@ -28,6 +29,10 @@ Route::prefix("auth")->group(function () {
     Route::middleware('auth:sanctum')->get('/checkAuth', function (Request $request) {
         return response()->json(['user' => $request->user()]);
     });
+
+    Route::middleware(['auth:sanctum'])->prefix('/admin')->group(function(){
+    Route::get("/dashboard", [DashboardController::class, "index"]);
+});
 });
 
 

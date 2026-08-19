@@ -5,11 +5,13 @@ import ShopProductSlice from "./ShopProductSlice";
 import ShopCartSlice from "./ShopCartSlice";
 import AddressSlice from "./ShopAddressSlice";
 import ShopOrderSlice from "./ShopOrderSlice";
+import adminDashboardSlice from "./AdminDashboardSlice"
 
 const store = configureStore({
   reducer: {
     auth: AuthSlice,
     adminProduct: AdminProductSlice,
+    adminDashboard: adminDashboardSlice,
     shopProduct: ShopProductSlice,
     shopCart: ShopCartSlice,
     shopAddress: AddressSlice,
